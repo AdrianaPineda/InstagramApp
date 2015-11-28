@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "NXOAuth2.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,9 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+
+    [[NXOAuth2AccountStore sharedStore] setClientID:@"" secret:@"" authorizationURL:[NSURL URLWithString:@"https://api.instagram.com/oauth/authorize"] tokenURL:[NSURL URLWithString:@"https://api.instagram.com/oauth/access_token"] redirectURL:[NSURL URLWithString:@"photoApp://open"] forAccountType:@"Instagram"];
+    
     return YES;
 }
 
@@ -42,6 +45,12 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options {
+    NSLog(@"Callback received");
+    
+    return [[NXOAuth2AccountStore sharedStore] handleRedirectURL:url];
 }
 
 #pragma mark - Core Data stack
